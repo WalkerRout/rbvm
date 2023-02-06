@@ -8,6 +8,15 @@ pub enum OpCode {
   MUL,  // Multiply
   DIV,  // Divide
   JMP,  // Absolute Jump
+  JMPF, // Relative Jump Forwards
+  JMPB, // Relative Jump Backwards
+  EQ,   // Equals
+  NEQ,  // Not Equals
+  LT,   // Less Than
+  GT,   // Greater Than
+  LTE,  // Less Than or Equals
+  GTE,  // Greater Than or Equals
+  JEQ,  // Jump if Equals
   HLT,  // Halt
   PAD,  // Padding, does nothing when executed
   IGL   // Illegal
@@ -23,6 +32,15 @@ impl From<u8> for OpCode {
       13  => OpCode::MUL,
       14  => OpCode::DIV,
       15  => OpCode::JMP,
+      16  => OpCode::JMPF,
+      17  => OpCode::JMPB,
+      18  => OpCode::EQ,
+      19  => OpCode::NEQ,
+      20  => OpCode::LT,
+      21  => OpCode::GT,
+      22  => OpCode::LTE,
+      23  => OpCode::GTE,
+      24  => OpCode::JEQ,
       255 => OpCode::PAD,
       _   => OpCode::IGL
     }
@@ -39,8 +57,17 @@ impl From<OpCode> for u8 {
       OpCode::MUL  => 13,
       OpCode::DIV  => 14,
       OpCode::JMP  => 15,
+      OpCode::JMPF => 16,
+      OpCode::JMPB => 17,
+      OpCode::EQ   => 18,
+      OpCode::NEQ  => 19,
+      OpCode::LT   => 20,
+      OpCode::GT   => 21,
+      OpCode::LTE  => 22,
+      OpCode::GTE  => 23,
+      OpCode::JEQ  => 24,
       OpCode::PAD  => 255,
-      OpCode::IGL  => 100,
+      OpCode::IGL  => 0,
     }
   }
 }
