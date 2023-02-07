@@ -25,55 +25,70 @@ impl Repl {
       let buffer = buffer.trim();
       self.command_buffer.push(buffer.to_owned());
 
-      match buffer {
-        ".quit" => {
-          println!("Terminating...");
-          std::process::exit(0); // normal exit
-        },
-
-        ".spill" => {
-          dump_data(self.command_buffer.as_slice());
-        },
-
-        ".program" => {
-          println!("Program instructions:");
-
-          let mut i = 0;
-          for instruction in &self.vm.program {
-            if i % 4 == 0 { print!("\n"); }
-            print!("0x{:02x} ", instruction);
-            i += 1;
-          }
-
-          print!("\n");
-          println!("-- End of Program Listing -- ");
-        },
-
-        ".registers" => {
-          println!("Registers and Contents:");
-          println!("{:#?}", self.vm.registers);
-          println!(" -- End of Register Listing -- ")
-        },
-
-        _ => {
-          let bytes = parse_hex(buffer);
-
-          match bytes {
-            Ok(bytes) => {
-              for byte in bytes {
-                self.vm.add_byte(byte);
-              }
-            },
-            Err(_) => {
-              println!("Unable to process input, please enter 4 groups of 2 characters!");
-            }
-          };
-
-          self.vm.run_once();
-        }
-      }
+      self.execute_command(buffer);
     } // end of loop
   }
+
+  fn execute_command(&mut self, command: &str) {
+    match command {
+      ".quit" => {
+        println!("Terminating...");
+        std::process::exit(0); // normal exit
+      },
+
+      ".spill" => {
+        dump_data(self.command_buffer.as_slice());
+      },
+
+      ".reset" => {
+        self.vm.program = vec![];
+        self.vm.registers = [0; 32];
+        println!("Environment reset...");
+      },
+
+      ".program" => {
+        println!("Program instructions:");
+
+        let mut i = 0;
+        for instruction in &self.vm.program {
+          if i % 4 == 0 { print!("\n"); }
+          print!("0x{:02x} ", instruction);
+          i += 1;
+        }
+
+        print!("\n");
+        println!("-- End of Program Listing -- ");
+      },
+
+      ".registers" => {
+        println!("Registers and Contents:");
+        println!("[");
+        for (i, register) in self.vm.registers.iter().enumerate() {
+          println!("  {}\t{},", i, register);
+        }
+        println!("];");
+        println!(" -- End of Register Listing -- ")
+      },
+
+      _ => {
+        let bytes = parse_hex(command);
+
+        match bytes {
+          Ok(bytes) => {
+            for byte in bytes {
+              self.vm.add_byte(byte);
+            }
+          },
+          Err(_) => {
+            println!("Unable to process input, please enter 4 groups of 2 characters!");
+          }
+        };
+
+        self.vm.run_once();
+      }
+    }
+  }
+
 }
 
 fn parse_hex(i: &str) -> Result<Vec<u8>, std::num::ParseIntError> {
