@@ -131,11 +131,10 @@ impl VM {
       },
 
       OpCode::JEQ => {
-        let register = self.step_eight_bits() as usize;
-        let target = self.registers[register];
+        let register = self.registers[self.step_eight_bits() as usize];
 
         if self.equivalence_flag {
-          self.pc = target as usize;
+          self.pc = register as usize;
         }
       },
 
@@ -187,6 +186,14 @@ impl VM {
         
       },
 
+      OpCode::STDO => {
+        let loc = self.step_eight_bits() as usize;
+        let register = self.registers[loc];
+        println!("r{:02x} = {}", loc, register);
+
+        self.step_sixteen_bits(); // ignore
+      },
+
       OpCode::HLT => {
         println!("HLT opcode found, halting...");
         cont = false; // terminate the loop
@@ -220,18 +227,18 @@ impl VM {
   }
 }
 
-fn get_test_vm() -> VM {
-  let mut test_vm = VM::new();
-
-  test_vm.registers[0] = 5;
-  test_vm.registers[1] = 10;
-
-  test_vm
-}
-
 #[cfg(test)]
 mod tests {
   use super::*;
+
+  fn get_test_vm() -> VM {
+    let mut test_vm = VM::new();
+
+    test_vm.registers[0] = 5;
+    test_vm.registers[1] = 10;
+
+    test_vm
+  }
 
   #[test]
   fn test_create_vm() {
@@ -259,7 +266,7 @@ mod tests {
     test_vm.registers[0] = 7;
     test_vm.equivalence_flag = true;
     test_vm.program = vec![
-      24, 0, 0xFF, 0xFF, 
+      24, 0, 0xFF, 0xFF,
       0xFF, 0xFF, 0xFF, 0xFF
     ];
     test_vm.run_once();
@@ -354,7 +361,7 @@ mod tests {
     test_vm.registers[0] = 10;
     test_vm.registers[1] = 10;
     test_vm.program = vec![
-      19, 0, 1, 0xFF, 
+      19, 0, 1, 0xFF,
       19, 0, 1, 0xFF
     ];
     test_vm.run_once();

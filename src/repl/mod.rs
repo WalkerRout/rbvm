@@ -36,18 +36,27 @@ impl Repl {
         std::process::exit(0); // normal exit
       },
 
-      ".spill" => {
+      ".spill" => { // eventually have a .dump to print ALL vm data
         dump_data(self.command_buffer.as_slice());
       },
 
+      ".clear" => {
+        print!("\x1B[2J\x1B[1;1H\n");
+      },
+
+      ".resetpc" => {
+        self.vm.pc = 0;
+      },
+
       ".reset" => {
+        self.vm.pc = 0;
         self.vm.program = vec![];
         self.vm.registers = [0; 32];
         println!("Environment reset...");
       },
 
       ".program" => {
-        println!("Program instructions:");
+        println!("Program instructions (pc={}):", self.vm.pc);
 
         let mut i = 0;
         for instruction in &self.vm.program {
@@ -68,6 +77,12 @@ impl Repl {
         }
         println!("];");
         println!(" -- End of Register Listing -- ")
+      },
+
+      ".execute" => {
+        self.vm.pc = 0;
+        self.vm.registers = [0; 32];
+        self.vm.run();
       },
 
       _ => {

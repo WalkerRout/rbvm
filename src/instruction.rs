@@ -17,6 +17,7 @@ pub enum OpCode {
   LTE,  // Less Than or Equals
   GTE,  // Greater Than or Equals
   JEQ,  // Jump if Equals
+  STDO, // Print to stdout
   HLT,  // Halt
   PAD,  // Padding, does nothing when executed
   IGL   // Illegal
@@ -41,6 +42,7 @@ impl From<u8> for OpCode {
       22  => OpCode::LTE,
       23  => OpCode::GTE,
       24  => OpCode::JEQ,
+      254 => OpCode::STDO,
       255 => OpCode::PAD,
       _   => OpCode::IGL
     }
@@ -66,6 +68,7 @@ impl From<OpCode> for u8 {
       OpCode::LTE  => 22,
       OpCode::GTE  => 23,
       OpCode::JEQ  => 24,
+      OpCode::STDO => 254,
       OpCode::PAD  => 255,
       OpCode::IGL  => 0,
     }
