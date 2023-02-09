@@ -95,7 +95,7 @@ impl Repl {
             }
           },
           Err(_) => {
-            println!("Unable to process input, please enter 4 groups of 2 characters!");
+            println!("Unable to process input, please enter 4 groups of 2 characters.\n The PAD byte, 0xff, may be used where input is expected but unneeded. If 0xff is found as the first instruction, the subsequent instructions in that 4 byte sequence will be skipped.");
           }
         };
 

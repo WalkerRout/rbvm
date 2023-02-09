@@ -183,7 +183,8 @@ impl VM {
       },
 
       OpCode::PAD => {
-        
+        self.step_eight_bits();   // ignore
+        self.step_sixteen_bits(); // ignore
       },
 
       OpCode::STDO => {
